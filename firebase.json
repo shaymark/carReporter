@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "public",
+    "public": "react-firebase-authentications",
     "ignore": [
       "firebase.json",
       "**/.*",
