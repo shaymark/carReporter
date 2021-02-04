@@ -7,7 +7,7 @@ const { isEmptyString } = require('../util/helpers');
 exports.getAllAddress = (request, response) => {
     db
         .collection('addresses')
-        // .where('username' , '==', request.user.username)
+        .where('username' , '==', request.user.username)
         .orderBy("createdAt", "desc")
         .get()
         .then((data) => {
@@ -36,7 +36,7 @@ exports.createAddress = (request, response) => {
         return response.status(400).json({ addressName: 'Must not be empty'}); 
     }
 
-    const username = "anyUsername"
+    const username = request.user.username
 
     // need to check how we remove the address alias if its undefined
     
@@ -62,7 +62,7 @@ exports.createAddress = (request, response) => {
 }
 
 exports.deleteAddress = (request, response) => {
-    
+    console.log('delete addresses')
     const document = db.doc(`/addresses/${request.params.addressId}`);
     document
     .get()
@@ -70,9 +70,9 @@ exports.deleteAddress = (request, response) => {
         if(!doc.exists) {
             return response.status(404).json({ error: 'address not found' })
         }
-        // if(doc.data().username != request.user.username) {
-        //     return response.status(403).json({error: "Unauthorized"})
-        // }
+        if(doc.data().username != request.user.username) {
+            return response.status(403).json({error: "Unauthorized"})
+        }
         document.delete().then(() => {
             return response.json( { message: 'Delete successfull' });
         })

@@ -4,11 +4,24 @@ const { db } = require('../util/admin');
 
 const { isEmptyString } = require('../util/helpers')
 
+/*
+** get: request.user.username, request.query.address(optional) 
+** return: all the message for the user with the address(optional)
+*/
 exports.getAllMessages = (reqeuest, response) => {
+
+    let query =     
     db
         .collection('messages')
-        // .where('username' , '==', request.user.username)
-        .orderBy("createdAt", "desc")
+        .where('reciverUser' , '==', reqeuest.user.username)
+        .orderBy("createdAt", "desc") 
+    
+    if (reqeuest.query.address) {
+        query = query.where('toAddress', '==', reqeuest.query.address)
+    }
+    
+
+    query
         .get()
         .then((data) => {
             let messages = []
@@ -18,7 +31,9 @@ exports.getAllMessages = (reqeuest, response) => {
                     title: doc.data().title,
                     body: doc.data().body,
                     createdAt: doc.data().createdAt,
-                    senderUser: doc.data().senderUser
+                    senderUser: doc.data().senderUser,
+                    toAddress: doc.data().toAddress,
+                    reciverUser: doc.data().reciverUser  
                 })
             })
             return response.json(messages);
@@ -32,7 +47,7 @@ exports.getAllMessages = (reqeuest, response) => {
 
 
 exports.postOneMessage = (request, response) => {
-    if(isEmptyString(reqeuest.body.body)) {
+    if(isEmptyString(request.body.body)) {
         return response.status(400).json({ body: 'Must not be empty'}); 
     }
     
@@ -40,26 +55,39 @@ exports.postOneMessage = (request, response) => {
         return response.status(400).json({ title: 'Must not be empty'});
     }
 
-    const senderUser = "anySender"
-    const reciverUser = "anyReciver"
+    const senderUser = request.user.username;
+    const reciverUser = "anyReciver";
     
     const newMessage = {
         title: request.body.title,
         body: request.body.body,
         createdAt: new Date().toISOString(),
         reciverUser: reciverUser,
-        senderUser: senderUser
+        senderUser: senderUser,
+        toAddress: request.body.toAddress
     }
 
-    
-
+    console.log(request.body.toAddress);
+  
     db
-        .collection('messages')
-        .add(newMessage)
-        .then((doc) => {
-            const responseMessageItem = newMessage;
-            responseMessageItem.id = doc.id;
-            return response.json({responseMessageItem});
+        .doc(`/addresses/${request.body.toAddress}`)
+        .get()
+        .then((addressDoc) => {
+            if(!addressDoc.exists) {
+                return response.status(500).json({ error: 'address not found' })
+            }
+            console.log(addressDoc.data().username);
+            newMessage.reciverUser =  addressDoc.data().username;
+        })
+        .then(()=> {
+            db.
+                collection('messages')
+                .add(newMessage)
+                .then((doc) => {
+                    const responseMessageItem = newMessage;
+                    responseMessageItem.id = doc.id;
+                    return response.json({responseMessageItem});
+                })
         })
         .catch((error) => {
             response.status(500).json({error: 'Somthing went wrong'});

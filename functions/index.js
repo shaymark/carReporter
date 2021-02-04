@@ -17,7 +17,8 @@ const {
 } = require('./APIs/messages')
 
 const {
-    loginUser
+    loginUser,
+    signup,
 } = require('./APIs/users')
 
 const {
@@ -34,7 +35,8 @@ app.delete('/message/:messageId', auth, deleteMessage)
 // app.put('/message/:messageId', auth, editMessage)
 
 //Users
-app.post('/user', loginUser)
+app.post('/login', loginUser)
+app.post('/signup', signup)
 
 //Addreses
 app.get('/address', auth, getAllAddress)
