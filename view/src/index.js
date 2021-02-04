@@ -1,8 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import axios from 'axios';
+
+// we do this in order to proxy all request to the functions server remove this for dev
+axios.defaults.baseURL = "https://us-central1-car-reporter.cloudfunctions.net/api";
+
 
 ReactDOM.render(
   <React.StrictMode>
