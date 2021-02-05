@@ -51,8 +51,12 @@ exports.postOneMessage = (request, response) => {
         return response.status(400).json({ body: 'Must not be empty'}); 
     }
     
-    if (request.body.title.trim() ==='') {
+    if (isEmptyString(request.body.title)) {
         return response.status(400).json({ title: 'Must not be empty'});
+    }
+
+    if (isEmptyString(request.body.toAddress)) {
+        return response.status(400).json({ toAddress: 'Must not be empty'});
     }
 
     const senderUser = request.user.username;
