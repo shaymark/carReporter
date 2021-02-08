@@ -4,7 +4,8 @@ import login from './pages/login'
 import signup from './pages/signup' 
 import home from './pages/home' 
 import messages from './pages/messages';
-import demoTable from './pages/demoTable'
+import demoTable from './pages/demoTable';
+import anonymouseMessages from './pages/anonymouseMessage';
 import { ThemeProvider as MuliThemeProvider } from '@material-ui/core/styles'
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme'
 
@@ -29,6 +30,7 @@ function App()  {
               <Switch>
                   <Route exact path="/login" component={login}/>
                   <Route exact path="/messages" component={messages}/>
+                  <Route exact path="/anonymouseMessages" component={anonymouseMessages}/>
                   <Route exact path="/demotable" component={demoTable}/>
                   <Route exact path="/" component={home}/> 
                   {/*<Route exact path="/signup" component={signup}/>

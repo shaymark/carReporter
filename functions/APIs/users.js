@@ -79,3 +79,12 @@ exports.signup = (request, response) => {
         return response.status(500).json({general: err.message})
     })
 }
+
+
+//User details
+exports.userDetails = (request, response) => {
+    const user = {
+        username: request.user.username
+    }
+    return response.json(user)
+}

@@ -19,6 +19,7 @@ const {
 const {
     loginUser,
     signup,
+    userDetails
 } = require('./APIs/users')
 
 const {
@@ -31,12 +32,14 @@ const {
 // Messages
 app.get('/message', auth, getAllMessages)
 app.post('/message', auth, postOneMessage)
+app.post('/messageAnonymouse', postOneMessage)
 app.delete('/message/:messageId', auth, deleteMessage)
 // app.put('/message/:messageId', auth, editMessage)
 
 //Users
 app.post('/login', loginUser)
 app.post('/signup', signup)
+app.get('/user', auth, userDetails)
 
 //Addreses
 app.get('/address', auth, getAllAddress)

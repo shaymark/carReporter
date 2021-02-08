@@ -45,7 +45,6 @@ exports.getAllMessages = (reqeuest, response) => {
             
 }
 
-
 exports.postOneMessage = (request, response) => {
     if(isEmptyString(request.body.body)) {
         return response.status(400).json({ body: 'Must not be empty'}); 
@@ -59,7 +58,13 @@ exports.postOneMessage = (request, response) => {
         return response.status(400).json({ toAddress: 'Must not be empty'});
     }
 
-    const senderUser = request.user.username;
+    let senderUser;
+    if (request.user) {
+        senderUser = request.user.username;
+    } else {
+        senderUser = "anonymouse@anonymouse.com"; 
+    }
+    
     const reciverUser = "anyReciver";
     
     const newMessage = {
