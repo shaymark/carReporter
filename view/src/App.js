@@ -8,7 +8,7 @@ import demoTable from './pages/demoTable';
 import anonymouseMessages from './pages/anonymouseMessage';
 import { ThemeProvider as MuliThemeProvider } from '@material-ui/core/styles'
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme'
-
+import generateBarcode from './pages/generateBarcode';
 
 const theme = createMuiTheme({
   palette: {
@@ -31,6 +31,7 @@ function App()  {
                   <Route exact path="/login" component={login}/>
                   <Route exact path="/messages" component={messages}/>
                   <Route exact path="/anonymouseMessages" component={anonymouseMessages}/>
+                  <Route exact path="/generateBarcode" component={generateBarcode}/>
                   <Route exact path="/demotable" component={demoTable}/>
                   <Route exact path="/" component={home}/> 
                   {/*<Route exact path="/signup" component={signup}/>

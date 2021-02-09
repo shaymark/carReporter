@@ -11,6 +11,7 @@ import { authMiddleWare } from '../util/auth';
 
 import MessageComponent from '../components/messagesComponent'
 import AddMessagesComponent from '../components/addMessage'
+import Barcode from '../components/qrCode'
 
 const styles = (theme) => ({
     
@@ -45,7 +46,6 @@ class messages extends Component {
             <div>
                 <a href="./messages">messages</a>
             </div>
-            
         )
     }
 }
