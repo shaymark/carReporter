@@ -8,12 +8,12 @@ var message = {
     score: '850',
     time: '2:45'
   },
-  token: registrationToken
+  token: regToken
 };
 
 // Send a message to the device corresponding to the provided
 // registration token.
-messenging.send(message)
+return messenging.send(message)
   .then((response) => {
     // Response is a message ID string.
     console.log('Successfully sent message:', response);

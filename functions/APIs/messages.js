@@ -4,6 +4,10 @@ const { db } = require('../util/admin');
 
 const { isEmptyString } = require('../util/helpers')
 
+const { sendPushNotification } = require('../util/pushNotifications')
+
+const regToken = "cAT7hR2Bl12nPnHAV1HuSg:APA91bEpWgjg0XYw-RK3gnETylH0ZpKaz3ZnIatN7EjmtW4ViZXj24ulnxOuiT1TThYVIBZSKhbVH09crYOfho42z2-YuxrAcST0c-BwlOUBWpGPdlVBB33aJ5Tu1_rj6SGJk0r_zY86";
+
 /*
 ** get: request.user.username, request.query.address(optional) 
 ** return: all the message for the user with the address(optional)
@@ -78,6 +82,7 @@ exports.postOneMessage = (request, response) => {
 
     console.log(request.body.toAddress);
   
+    let responseMessageItem;
     db
         .doc(`/addresses/${request.body.toAddress}`)
         .get()
@@ -93,8 +98,15 @@ exports.postOneMessage = (request, response) => {
                 collection('messages')
                 .add(newMessage)
                 .then((doc) => {
-                    const responseMessageItem = newMessage;
+                    responseMessageItem = newMessage;
                     responseMessageItem.id = doc.id;
+                })
+                .then(() => {
+                    const currentToken = regToken;
+                    const data = {}
+                    sendPushNotification(currentToken, data);
+                })
+                .then(() => {
                     return response.json({responseMessageItem});
                 })
         })
