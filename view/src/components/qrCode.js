@@ -13,8 +13,10 @@ import TextField from '@material-ui/core/TextField';
 const styles = (theme) => ({
   barcodeArea:{
     maxWidth:"400px",
-    textAlign: "center"
+    textAlign: "center",
+    borderStyle: "solid"
   }
+  
 })
 
 class qrCode extends Component {
@@ -26,9 +28,7 @@ class qrCode extends Component {
       
     }
     this.componentRef = {}
-    const { address } = porps
-    this.messageUrl = address
-}
+    }
 
     handleChange = (event) => {
       console.log("handleChange");
@@ -38,7 +38,8 @@ class qrCode extends Component {
     }
 
     render(){
-      const { classes } = this.props
+      const { classes, address} = this.props
+      
       return(
         <div>
 
@@ -58,8 +59,8 @@ class qrCode extends Component {
           />
           <div className={classes.barcodeArea} ref={(el) => (this.componentRef = el)}>
             <p>{this.state.barcodeTitle}</p>
-            <QRCode value={this.messageUrl} />
-            <p>{this.messageUrl}</p>
+            <QRCode value={this.props.address} />
+            <p>{this.props.address}</p>
           </div>
         </div>
       )

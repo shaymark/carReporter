@@ -6,7 +6,7 @@ const { isEmptyString } = require('../util/helpers')
 
 const { sendPushNotification } = require('../util/pushNotifications')
 
-const regToken = "cAT7hR2Bl12nPnHAV1HuSg:APA91bEpWgjg0XYw-RK3gnETylH0ZpKaz3ZnIatN7EjmtW4ViZXj24ulnxOuiT1TThYVIBZSKhbVH09crYOfho42z2-YuxrAcST0c-BwlOUBWpGPdlVBB33aJ5Tu1_rj6SGJk0r_zY86";
+const regToken = "cyvmRnEd35MXg99ye8fHK7:APA91bHjbZLr61db4dLMC3jj44PbbANFUW87nUgUNYgl23aXBPv10Et1axBMs3uXFV_ULtDIDQPDQYtgKyQ1R8ESmOVqbEdYyJ052NnQGDpUpniA7gEDHYuHobeiee0UmDVjzT5IC2RO";
 
 /*
 ** get: request.user.username, request.query.address(optional) 

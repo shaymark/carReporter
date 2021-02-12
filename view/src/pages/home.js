@@ -14,7 +14,10 @@ import AddMessagesComponent from '../components/addMessage'
 import Barcode from '../components/qrCode'
 
 const styles = (theme) => ({
-    
+    linkList: {
+        backgoundColor: 'red',
+        color: 'green'
+    }
 })
 
 class messages extends Component {
@@ -44,7 +47,13 @@ class messages extends Component {
 
         return (
             <div>
-                <a href="./messages">messages</a>
+                <div className={classes.linkList}>
+                    <ul>
+                        <li><a href="./messages">messages</a></li>
+                        <li><a href="./generateBarcode">genarate barcode</a></li>
+                    </ul>
+                </div>
+                
             </div>
         )
     }

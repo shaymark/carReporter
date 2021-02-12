@@ -2,6 +2,7 @@
 import firebase from "firebase/app"
 import "firebase/messaging";
 import { firebaseConfig } from './configFirebase'
+import * as serverApi from './serverApi'
 
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging()
@@ -11,11 +12,13 @@ navigator.serviceWorker.register('/firebase-messaging-sw.js')
     return messaging.getToken()
 })
 .then(function (currentToken) {
-    return console.log('current token', currentToken);
+    console.log('current token', currentToken);
+    //send token to the server
+    return serverApi.sendFcmTokenToServer(currentToken)
 })
 .then(() => {
     return messaging.onMessage((payload) => {
-        console.log('Message received. ', payload);
+        console.log('New Message received. ', payload);
         // ...
     });
 })

@@ -2,12 +2,15 @@
 
 const functions = require('firebase-functions');
 const app = require('express')();
+const useragent = require('express-useragent');
 
 const auth = require('./util/auth')
 
 const cors = require('cors');
 app.use(cors());
 app.options('*', cors())
+
+app.use(useragent.express());
 
 const {
     getAllMessages,
@@ -29,6 +32,11 @@ const {
     editAddress
 } = require('./APIs/address')
 
+const {
+    registerFcmToken
+} = require('./APIs/fcm')
+
+
 // Messages
 app.get('/message', auth, getAllMessages)
 app.post('/message', auth, postOneMessage)
@@ -46,5 +54,8 @@ app.get('/address', auth, getAllAddress)
 app.post('/address', auth, createAddress)
 app.delete('/address/:addressId', auth, deleteAddress)
 app.put('/address/:addressId', auth, editAddress)
+
+//Fcm
+app.post('/registerFcmToken', auth, registerFcmToken)
 
 exports.api = functions.https.onRequest(app)
