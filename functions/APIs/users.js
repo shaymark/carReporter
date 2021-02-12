@@ -9,7 +9,7 @@ firebase.initializeApp(config);
 
 
 // Login
-exports.loginUser = (request, response) => {
+exports.loginUser = async (request, response) => {
     const user = {
         email: request.body.email,
         password: request.body.password,
@@ -17,25 +17,20 @@ exports.loginUser = (request, response) => {
 
     const { valid, errors } = validateLoginData(user)
     if (!valid) return response.status(400).json(errors);
-
-    firebase
-        .auth()
-        .signInWithEmailAndPassword(user.email, user.password)
-        .then((data) => {
-            return data.user.getIdToken();
-        })
-        .then((token) => {
-            return response.json( { token });
-        })
-        .catch((error) => {
-            console.error(console.error);
-            return response.status(403).json({general: 'wrong credentials, please try again'})
-        })
+    try {
+        let auth = firebase.auth() 
+        let data = await auth.signInWithEmailAndPassword(user.email, user.password) 
+        let token = await data.user.getIdToken()
+        return response.json( { token });
+    } catch (err) {
+        console.error(console.error);
+        return response.status(403).json({general: 'wrong credentials, please try again'})    
+    }
 };
 
 // Create user
 
-exports.signup = (request, response) => {
+exports.signup = async (request, response) => {
     
     let newUser = {
         email: request.body.email,
@@ -51,33 +46,18 @@ exports.signup = (request, response) => {
     
     let token, userId;
     
-    firebase
-        .auth()
-        .createUserWithEmailAndPassword(newUser.email, newUser.password)
-    .then((data) => {
-        userId = data.user.uid;
-        return data.user.getIdToken(); 
-    })
-    .then((tokenId) => {
-        token = tokenId
+    try {
+        let auth = firebase.auth()
+        let data = await auth.createUserWithEmailAndPassword(newUser.email, newUser.password)
+        let token = await data.user.getIdToken()
+        newUser.userId = data.user.uid
+        let doc = db.doc(`/users/${newUser.username}`)
+        await doc.set(newUser)
 
-        newUser.userId = userId;
-        
-        db
-            .doc(`/users/${newUser.username}`)
-            .set(newUser);
-    })
-    .then(() => {
         return response.status(201).json({token})
-    })
-    .catch((error) => {
-        response.status(500).json({error: 'Somthing went wrong'});
-        console.log(error);
-    })
-    .catch((err) => {
-        console.log("Failed to create user", err.mssage);
-        return response.status(500).json({general: err.message})
-    })
+    } catch {
+        response.status(500).json({error: 'Somthing went wrong'}); 
+    }
 }
 
 

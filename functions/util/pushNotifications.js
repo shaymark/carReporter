@@ -1,24 +1,23 @@
 const { messenging } = require('./admin') 
 
-exports.sendPushNotification = (regToken, data) => {
+exports.sendPushNotification = async (regToken, data) => {
 // This registration token comes from the client FCM SDKs.
 
-var message = {
-  data: {
-    score: '850',
-    time: '2:45'
-  },
-  token: regToken
-};
+  var message = {
+    data: {
+        title:"title",
+        body: "body",
+        click_action: "/messages"
+    },
+    token: regToken
+  };
 
-// Send a message to the device corresponding to the provided
-// registration token.
-return messenging.send(message)
-  .then((response) => {
-    // Response is a message ID string.
+  // Send a message to the device corresponding to the provided
+  // registration token.
+  try {
+    let response = await messenging.send(message)
     console.log('Successfully sent message:', response);
-  })
-  .catch((error) => {
+  } catch (error) {
     console.log('Error sending message:', error);
-  });
+  }
 }

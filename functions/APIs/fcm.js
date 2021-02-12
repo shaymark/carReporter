@@ -2,7 +2,7 @@
 
 const { db } = require('../util/admin');
 
-exports.registerFcmToken = (request, response) => {
+exports.registerFcmToken = async (request, response) => {
     
     const userAgent = request.useragent;
     let regTokenName;
@@ -13,17 +13,15 @@ exports.registerFcmToken = (request, response) => {
 
     if(request.body.appUseragent) regTokenName = request.body.appUseragent
 
-
-    db
-        .doc(`users/${request.user.username}`)
-        .update({
+    try {
+        let doc = db.doc(`users/${request.user.username}`)
+        await doc.update({
             [regTokenName]: request.body.fcmToken
         })
-        .then(() => {
-            return response.json({status: "registered"});
-        })
-        .catch((err) => {
-            return status(500).json({error: err.code, message: err.message}); 
-        })
-        
+    }
+    catch {
+        return status(500).json({error: err.code, message: err.message}); 
+    }
+
+    return response.json({status: "registered"});
 }

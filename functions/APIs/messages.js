@@ -12,7 +12,7 @@ const regToken = "cyvmRnEd35MXg99ye8fHK7:APA91bHjbZLr61db4dLMC3jj44PbbANFUW87nUg
 ** get: request.user.username, request.query.address(optional) 
 ** return: all the message for the user with the address(optional)
 */
-exports.getAllMessages = (reqeuest, response) => {
+exports.getAllMessages = async (reqeuest, response) => {
 
     let query =     
     db
@@ -24,32 +24,28 @@ exports.getAllMessages = (reqeuest, response) => {
         query = query.where('toAddress', '==', reqeuest.query.address)
     }
     
-
-    query
-        .get()
-        .then((data) => {
-            let messages = []
-            data.forEach(doc => {
-                messages.push({
-                    messageId: doc.id,
-                    title: doc.data().title,
-                    body: doc.data().body,
-                    createdAt: doc.data().createdAt,
-                    senderUser: doc.data().senderUser,
-                    toAddress: doc.data().toAddress,
-                    reciverUser: doc.data().reciverUser  
-                })
+    try {
+        data = await query.get()
+        let messages = []
+        data.forEach(doc => {
+            messages.push({
+                messageId: doc.id,
+                title: doc.data().title,
+                body: doc.data().body,
+                createdAt: doc.data().createdAt,
+                senderUser: doc.data().senderUser,
+                toAddress: doc.data().toAddress,
+                reciverUser: doc.data().reciverUser  
             })
-            return response.json(messages);
         })
-        .catch((err) => {
-            console.log(err);
-            return response.status(500).json({error: err.code, message: err.message});
-        })
-            
+        return response.json(messages); 
+    } catch(err) {
+        console.log(err);
+        return response.status(500).json({error: err.code, message: err.message});
+    }
 }
 
-exports.postOneMessage = (request, response) => {
+exports.postOneMessage = async (request, response) => {
     if(isEmptyString(request.body.body)) {
         return response.status(400).json({ body: 'Must not be empty'}); 
     }
@@ -83,60 +79,47 @@ exports.postOneMessage = (request, response) => {
     console.log(request.body.toAddress);
   
     let responseMessageItem;
-    db
-        .doc(`/addresses/${request.body.toAddress}`)
-        .get()
-        .then((addressDoc) => {
-            if(!addressDoc.exists) {
-                return response.status(500).json({ error: 'address not found' })
-            }
-            console.log(addressDoc.data().username);
-            newMessage.reciverUser =  addressDoc.data().username;
-        })
-        .then(()=> {
-            db.
-                collection('messages')
-                .add(newMessage)
-                .then((doc) => {
-                    responseMessageItem = newMessage;
-                    responseMessageItem.id = doc.id;
-                })
-                .then(() => {
-                    const currentToken = regToken;
-                    const data = {}
-                    sendPushNotification(currentToken, data);
-                })
-                .then(() => {
-                    return response.json({responseMessageItem});
-                })
-        })
-        .catch((error) => {
-            response.status(500).json({error: 'Somthing went wrong'});
-            console.log(error);
-        })
+    try {
+        let doc = db.doc(`/addresses/${request.body.toAddress}`)
+        let addressDoc = await doc.get()
+        if(!addressDoc.exists) {
+            return response.status(500).json({ error: 'address not found' })
+        }
+        console.log(addressDoc.data().username);
+        newMessage.reciverUser =  await addressDoc.data().username;
+        
+        let messages = db.collection('messages')
+        let messageDoc = await messages.add(newMessage)
+        responseMessageItem = newMessage;
+        responseMessageItem.id = messageDoc.id;
+
+        const currentToken = regToken;
+        const data = {}
+        await sendPushNotification(currentToken, data);
+
+        return response.json({responseMessageItem});
+    } catch (err) {
+        console.log(error);
+        response.status(500).json({error: 'Somthing went wrong'});
+    }
 }
 
 
 
-exports.deleteMessage = (request, response) => {
+exports.deleteMessage = async (request, response) => {
     
     const document = db.doc(`/messages/${request.params.messageId}`);
-    document
-    .get()
-    .then((doc) => {
-        if(!doc.exists) {
+    try {
+        let data = await document.get()
+        if(!data.exists) {
             return response.status(404).json({ error: 'message not found' })
         }
-        // if(doc.data().username != request.user.username) {
-        //     return response.status(403).json({error: "Unauthorized"})
-        // }
-        document.delete().then(() => {
-            return response.json( { message: 'Delete successfull' });
-        })
-    })
-    .catch((err) => {
+        await document.delete()
+            
+        return response.json( { message: 'Delete successfull' });
+    } catch(err) {
         return response.status(500).json({ error: err.code, message: err.message })
-    }) 
+    }
 }
 
 exports.editMessage = (request, response) => {
