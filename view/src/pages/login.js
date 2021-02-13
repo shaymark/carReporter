@@ -14,6 +14,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+import { registerFcmMessage } from '../util/firebaseMessaging';
+
 import axios from 'axios';
 
 const styles = (theme) => ({
@@ -92,6 +94,9 @@ class login extends Component {
         .post('/login', userData)
         .then((response)=> {
             localStorage.setItem('AuthToken', `Bearer ${response.data.token}`);
+            return registerFcmMessage()
+        })
+        .then(() => {
             this.setState({
                 loading: false,
             });

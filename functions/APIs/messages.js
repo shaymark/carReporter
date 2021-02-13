@@ -81,10 +81,10 @@ exports.postOneMessage = async (request, response) => {
     let responseMessageItem;
     try {
         let doc = db.doc(`/addresses/${request.body.toAddress}`)
-        let addressDoc = await doc.get()
-        if(!addressDoc.exists) {
-            return response.status(500).json({ error: 'address not found' })
-        }
+         let addressDoc = await doc.get()
+         if(!addressDoc.exists) {
+             return response.status(500).json({ error: 'address not found' })
+         }
         console.log(addressDoc.data().username);
         newMessage.reciverUser =  await addressDoc.data().username;
         
@@ -93,9 +93,12 @@ exports.postOneMessage = async (request, response) => {
         responseMessageItem = newMessage;
         responseMessageItem.id = messageDoc.id;
 
-        const currentToken = regToken;
-        const data = {}
-        await sendPushNotification(currentToken, data);
+        // send push notification to the reciverUseuser in background
+        (async () => {
+            let userDoc = db.doc(`/users/${newMessage.reciverUser}`)
+            let user = await userDoc.get()
+            await sendPushNotification(user.data().fcmTokenWeb, {});
+        })()
 
         return response.json({responseMessageItem});
     } catch (err) {

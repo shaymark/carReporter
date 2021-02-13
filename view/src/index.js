@@ -5,8 +5,12 @@ import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 import { deleteToken, getToken, receiveMessage } from './util/firebaseMessaging' 
 
-// we do this in order to proxy all request to the functions server remove this for dev
-// axios.defaults.baseURL = "https://us-central1-car-reporter.cloudfunctions.net/api";
+console.log('start')
+const baseFunctionsUrl = {
+  'production': "https://us-central1-car-reporter.cloudfunctions.net/api",
+  'development': "http://localhost:5000/car-reporter/us-central1/api"
+}
+axios.defaults.baseURL = baseFunctionsUrl[process.env.NODE_ENV]
 
 ReactDOM.render(
   <React.StrictMode>

@@ -5,8 +5,8 @@ exports.sendPushNotification = async (regToken, data) => {
 
   var message = {
     data: {
-        title:"title",
-        body: "body",
+        title: (data && data.title) || "defult title",
+        body: (data && data.body) || "defult body",
         click_action: "/messages"
     },
     token: regToken

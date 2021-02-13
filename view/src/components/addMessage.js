@@ -94,7 +94,7 @@ class addMessages extends Component {
                 console.log(this.props);
             })
             .catch((error) => {
-                this.setState({ open: true, errors: error.response.data });
+                this.setState({ open: true, errors: error && error.response && error.response.data });
                 console.log(error);
             });
     }
