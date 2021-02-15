@@ -9,7 +9,7 @@ import Grid from '@material-ui/core/Grid';
 
 import Button from '@material-ui/core/Button';
 
-import axios from 'axios';
+import {postAnonymosMessage}  from '../util/serverApi'
 
 import MessageComponent from './messagesComponent'
 import { NoRowsOverlay } from '@material-ui/data-grid';
@@ -58,8 +58,6 @@ class addMessages extends Component {
         this.handleSubmit = this.handleSubmit
     }
 
-    
-
     handleChange = (event) => {
 		this.setState({
 			[event.target.name]: event.target.value
@@ -67,35 +65,24 @@ class addMessages extends Component {
 	};
     
     handleSubmit = (event) => {
-       
         event.preventDefault();
-        const message = {
+
+        postAnonymosMessage({
             title: this.state.title,
             body: this.state.body,
             toAddress: this.state.toAddress
-        };
-        let options = {};
-        
-        options = {
-            url: '/messageAnonymouse',
-            method: 'post',
-            data: message
-        };
-
-        const authToken = localStorage.getItem('AuthToken');
-        axios.defaults.headers.common = { Authorization: `${authToken}` };
-        axios(options)
-            .then(() => {
-                this.setState({ 
-                    open: false 
-                });
-                this.props.onMessageAdded()
-                console.log(this.props);
-            })
-            .catch((error) => {
-                this.setState({ open: true, errors: error.response.data });
-                console.log(error);
+        })
+        .then(() => {
+            this.setState({ 
+                open: false 
             });
+            this.props.onMessageAdded()
+            console.log(this.props);
+        })
+        .catch((error) => {
+            this.setState({ open: true, errors: error.response.data });
+            console.log(error);
+        });
     }
 
     render() {

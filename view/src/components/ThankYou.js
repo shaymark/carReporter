@@ -7,13 +7,7 @@ import React, { Component } from 'react';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import { DataGrid } from '@material-ui/data-grid';
 
-import { authMiddleWare } from '../util/auth';
-
-import axios from 'axios';
-
-import equal from 'fast-deep-equal'
 
 const styles = (theme) => ({
     papare: {
@@ -50,7 +44,6 @@ class thankYou extends Component {
             <div>
                 Thank you !
             </div>
-                
         )
     }
 }

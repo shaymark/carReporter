@@ -7,13 +7,12 @@ import React, { Component } from 'react';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import { DataGrid } from '@material-ui/data-grid';
-
 import { authMiddleWare } from '../util/auth';
 
-import axios from 'axios';
+import { getUserDetails } from '../util/serverApi'
 
 import equal from 'fast-deep-equal'
+
 
 const styles = (theme) => ({
     papare: {
@@ -89,27 +88,23 @@ class userDetail extends Component {
 
       updateUserDetail() {
         console.log("updateUserDetail")
-        authMiddleWare(this.props.history);
-		const authToken = localStorage.getItem('AuthToken');
-		axios.defaults.headers.common = { Authorization: `${authToken}` };
-		axios
-			.get('/user')
-			.then((response) => {
-                console.log(response)
-				this.setState({
-                    username: response.data.username,
-				});
-			})
-			.catch((err) => {
-                console.log(err);
-                if (err.response.status === 403) {
-                    console.log(this.props.history)
-                   if(this.props.history) {
-                    this.props.history.push('/login');
-                   }
+        getUserDetails()
+        .then((response) => {
+            console.log(response)
+            this.setState({
+                username: response.data.username,
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+            if (err.response.status === 403) {
+                console.log(this.props.history)
+                if(this.props.history) {
+                this.props.history.push('/login');
                 }
-				console.log(err);
-			}); 
+            }
+            console.log(err);
+        }); 
     }
 
     render() {

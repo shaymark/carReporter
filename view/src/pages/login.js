@@ -16,7 +16,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { registerFcmMessage } from '../util/firebaseMessaging';
 
-import axios from 'axios';
+import { setAuthToken } from '../util/auth';
+import { loginServer } from '../util/serverApi'
 
 const styles = (theme) => ({
     papare: {
@@ -85,15 +86,13 @@ class login extends Component {
 
    handleSubmit = (event) => {
        event.preventDefault();
-       this.setState({loading: true})
-       const userData = {
-           email: this.state.email,
-           password: this.state.password
-       };
-       axios
-        .post('/login', userData)
+       let userData = {
+            email: this.state.email,
+            password: this.state.password
+       }
+       loginServer(userData)
         .then((response)=> {
-            localStorage.setItem('AuthToken', `Bearer ${response.data.token}`);
+            setAuthToken(response.data.token)
             return registerFcmMessage()
         })
         .then(() => {

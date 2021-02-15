@@ -9,9 +9,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 
 import { DataGrid } from '@material-ui/data-grid';
 
-import { authMiddleWare } from '../util/auth';
-
-import axios from 'axios';
+import {getAllMessages} from '../util/serverApi';
 
 import equal from 'fast-deep-equal'
 
@@ -76,43 +74,39 @@ class messages extends Component {
       } 
 
     updateMessages() {
-        authMiddleWare(this.props.history);
-		const authToken = localStorage.getItem('AuthToken');
-		axios.defaults.headers.common = { Authorization: `${authToken}` };
-		axios
-			.get('/message')
-			.then((response) => {
-                
-                const data = {};
-                data.columns = [
-                        { field: 'id', headerName: 'ID', width: 250 },
-                        { field: 'title', headerName: 'Title', width: 130 },
-                        { field: 'body', headerName: 'Body', width: 130 },
-                      ]
-                data.rows = response.data.map((item) => {
-                    return(
-                        {
-                        id: item.messageId,
-                        title: item.title,
-                        body: item.body
-                        }
-                    )}
-                    );
-        
-				this.setState({
-                    data: data,
-					messages: response.data,
-					uiLoading: false
-				});
-			})
-			.catch((err) => {
-                if (err.response.status === 403) {
-                   if(this.props.history) {
-                    this.props.history.push('/login');
-                   }
+        getAllMessages()
+        .then((response) => {
+            
+            const data = {};
+            data.columns = [
+                    { field: 'id', headerName: 'ID', width: 250 },
+                    { field: 'title', headerName: 'Title', width: 130 },
+                    { field: 'body', headerName: 'Body', width: 130 },
+                    ]
+            data.rows = response.data.map((item) => {
+                return(
+                    {
+                    id: item.messageId,
+                    title: item.title,
+                    body: item.body
+                    }
+                )}
+                );
+    
+            this.setState({
+                data: data,
+                messages: response.data,
+                uiLoading: false
+            });
+        })
+        .catch((err) => {
+            if (err.response.status === 403) {
+                if(this.props.history) {
+                this.props.history.push('/login');
                 }
-				console.log(err);
-			}); 
+            }
+            console.log(err);
+        }); 
     }
 
     render() {

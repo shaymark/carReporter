@@ -9,10 +9,7 @@ import Grid from '@material-ui/core/Grid';
 
 import Button from '@material-ui/core/Button';
 
-import axios from 'axios';
-
-import MessageComponent from '../components/messagesComponent'
-import { NoRowsOverlay } from '@material-ui/data-grid';
+import { postMessage } from '../util/serverApi'
 
 const styles = (theme) => ({
     papare: {
@@ -68,35 +65,27 @@ class addMessages extends Component {
 	};
     
     handleSubmit = (event) => {
-        authMiddleWare(this.props.history);
         event.preventDefault();
-        const message = {
+        postMessage({
             title: this.state.title,
             body: this.state.body,
             toAddress: this.state.toAddress
-        };
-        let options = {};
-        
-        options = {
-            url: '/message',
-            method: 'post',
-            data: message
-        };
+        })
+        .then(() => {
+            this.setState({ 
+                open: false,
+                title: '',
+                body: '',
+                toAddress: ''
 
-        const authToken = localStorage.getItem('AuthToken');
-        axios.defaults.headers.common = { Authorization: `${authToken}` };
-        axios(options)
-            .then(() => {
-                this.setState({ 
-                    open: false 
-                });
-                this.props.onMessageAdded()
-                console.log(this.props);
-            })
-            .catch((error) => {
-                this.setState({ open: true, errors: error && error.response && error.response.data });
-                console.log(error);
             });
+            this.props.onMessageAdded()
+            console.log(this.props);
+        })
+        .catch((error) => {
+            this.setState({ open: true, errors: error && error.response && error.response.data });
+            console.log(error);
+        });
     }
 
     render() {

@@ -10,7 +10,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import NativeSelect from '@material-ui/core/NativeSelect';
 
-import axios from 'axios'
+import { getAllAddress } from '../util/serverApi'
 
 
 const styles = (theme) => ({
@@ -44,31 +44,26 @@ class address extends Component {
     }
 
     getAddressFromServer(){
-        authMiddleWare(this.props.history);
-		const authToken = localStorage.getItem('AuthToken');
-		axios.defaults.headers.common = { Authorization: `${authToken}` };
-		axios
-			.get('/address')
-			.then((response) => {
-                console.log(response.data)
-                let items = response.data.map((item) => {
-                    return {
-                        name: item.addressName,
-                        value: item.addressId
-                    }
-                })
-
-                this.setState({
-                    addressArray: items,
-                    address: items[0].value
-                })
-                this.props.onChange({
-                    address: items[0].value
-                })
-			})
-			.catch((err) => {
-				console.log(err);
-			}); 
+        getAllAddress()
+        .then((response) => {
+            console.log(response.data)
+            let items = response.data.map((item) => {
+                return {
+                    name: item.addressName,
+                    value: item.addressId
+                }
+            })
+            this.setState({
+                addressArray: items,
+                address: items[0].value
+            })
+            this.props.onChange({
+                address: items[0].value
+            })
+        })
+        .catch((err) => {
+            console.log(err);
+        }); 
     }
 
     render() {
