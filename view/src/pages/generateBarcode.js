@@ -1,63 +1,78 @@
-//home.js
 
-// all data table is taken from https://material-ui.com/components/tables/
 
-// Material UI components
-import React, { Component } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import Barcode from '../components/qrCode'
-import AddressSelector from '../components/addressComponent'
-import queryString from 'query-string'
-import { BaseUrl } from '../util/config'
+import ReactToPrint from "react-to-print"
+import QRCode  from "qrcode.react"
+import TextField from '@material-ui/core/TextField';
 
+import AddressPicker from '../components/address/addressComponent'
+
+import {BaseUrl} from '../util/config'
+import userDetails from '../components/userDetails';
 
 const styles = (theme) => ({
-   
+  barcodeArea:{
+    maxWidth:"400px",
+    textAlign: "center",
+    borderStyle: "solid"
+  }
+  
 })
 
-class generateBarcode extends Component {
-
-    constructor(porps) {
-        super(porps);
-
-
-        this.state = {
-            address: "" 
-        }
-
-        let params = queryString.parse(this.props.location.search)
-        let toAddress = params.toAddress;
-        this.address = this.postMessageUrl(toAddress) ?? undefined
-
-        this.onAddressChange = this.onAddressChange.bind(this);
-
-    }
-
-    onAddressChange(item) {
-        if(item.address){
-            this.setState({
-                address: this.postMessageUrl(item.address)
-            })
-        }
-    }
-
-    postMessageUrl = (address) => {
-        return `${BaseUrl}/anonymouseMessages?toAddress=${address}`
-      }
-
-    render() {
-
-        const { classes } = this.props
-        console.log(this.state.address)
-        return (
-            <div className={classes.printLayout}>
-                <AddressSelector onChange={this.onAddressChange}/>
-                <Barcode address={this.state.address}/>
-            </div>
-        )
-    }
+const postMessageUrl = (address) => {
+  return `${BaseUrl}/anonymouseMessages?toAddress=${address}`
 }
 
-export default withStyles(styles)(generateBarcode)
+const CustomQRCode = () => {
+
+  const [title, setTitle] = useState('')
+  const [address, setAddress] = useState('')
+  const [data, setData] = useState({title:'', address:''})
+
+  useEffect(()=>{
+    setData({title, address})
+  }, [title, address])
+
+  const pageEl = useRef(null)
+
+  return (
+    <div>
+      <userDetails/>
+      <AddressPicker onChange={(item)=>setAddress(postMessageUrl(item.address))}/>
+      <ReactToPrint
+             trigger={() => <a href="#">Print this out!</a>}
+             content={() => pageEl.current}
+          />
+     <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="barcodeTitle"
+            label="barcodTitle"
+            name="barcodeTitle"
+            onChange={(event)=>{setTitle(event.target.value)}}
+                        /> 
+      <div ref={pageEl}>
+        <Page  data={data}/>
+      </div>
+    </div>
+  )
+}
+
+const Page = withStyles(styles)
+  ((props) => {
+    const { classes, data} = props
+    return(     
+      <div className={classes.barcodeArea}>
+        <p>{props.data.title}</p>
+        <QRCode value={props.data.address} />
+        <p>{props.data.address}</p>
+      </div>
+    )
+})
+
+export default withStyles(styles)(CustomQRCode)

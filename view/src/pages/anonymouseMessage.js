@@ -9,7 +9,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 
 import { authMiddleWare } from '../util/auth';
 
-import AddMessagesComponent from '../components/addMessageAnonymouse';
+import AddMessagesComponent from '../components//addMessage/addMessage';
 import ThankYouComponent from '../components/ThankYou';
 import UserDetails from '../components/userDetails'
 

@@ -9,8 +9,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 
 import { authMiddleWare } from '../util/auth';
 
-import MessageComponent from '../components/messagesComponent'
-import AddMessagesComponent from '../components/addMessage'
+import MessageComponent from '../components/messges/messagesComponent'
+import AddMessagesComponent from '../components/addMessage/addMessage'
 
 const styles = (theme) => ({
     papare: {
