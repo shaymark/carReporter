@@ -8,7 +8,7 @@ module.exports = async (request, response, next) => {
         idToken = request.headers.authorization.split('Bearer ')[1];
     } else {
         console.error('No token found');
-        return response.status(403).json({error: 'Unauthorized'});
+        return response.status(401).json({error: 'Unauthorized'});
     }
 
     try {
@@ -22,8 +22,7 @@ module.exports = async (request, response, next) => {
     } catch(err) {
         console.error('Error while verifying token', err);
         console.error( err); 
-        return response.status(403).json({errror: err}); 
+        return response.status(401).json({errror: err}); 
     }
   
-
 }

@@ -14,6 +14,7 @@ exports.loginUser = async (request, response) => {
         email: request.body.email,
         password: request.body.password,
     }
+    console.log(user)
 
     const { valid, errors } = validateLoginData(user)
     if (!valid) return response.status(400).json(errors);

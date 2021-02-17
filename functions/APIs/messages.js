@@ -6,8 +6,6 @@ const { isEmptyString } = require('../util/helpers')
 
 const { sendPushNotification } = require('../util/pushNotifications')
 
-const regToken = "cyvmRnEd35MXg99ye8fHK7:APA91bHjbZLr61db4dLMC3jj44PbbANFUW87nUgUNYgl23aXBPv10Et1axBMs3uXFV_ULtDIDQPDQYtgKyQ1R8ESmOVqbEdYyJ052NnQGDpUpniA7gEDHYuHobeiee0UmDVjzT5IC2RO";
-
 /*
 ** get: request.user.username, request.query.address(optional) 
 ** return: all the message for the user with the address(optional)
